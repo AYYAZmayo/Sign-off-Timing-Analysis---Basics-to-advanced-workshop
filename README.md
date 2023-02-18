@@ -159,7 +159,7 @@ It is always not necessary to -waveform option while defing the clock. We can al
 ## Generated Clocks
 Generated clocks are the clocks which are created inside the design and they are usually divided or multiplied version of the primary clock of the design. So, to define such clocks create_generated_clock command is used. There are some extra options are also being used in the below figure along with the command create_generated_clcok.
 1) -devide_by 2 
-This is actually provided to tell the STA tool that the gnerated clock has a frequency devide by 2 or its period is multiplied by 2. 
+This is actually provided to tell the STA tool that the generated clock has a frequency devide by 2 or its period is multiplied by 2. 
 2) -source C1 
 This is telling the STA tool the generated clock has been generated from a clock source C1 (that is primary clock)
 3) -master_clcok CLK1
@@ -182,11 +182,38 @@ For generating more complex wavefors an flag -edge_shift can also be used along 
 ![day1 24](https://user-images.githubusercontent.com/43933912/219881544-603866b4-0848-4fa8-8d95-9aa8fcf88306.png)
 
 Here -edges {1 1 3} -edge_shift {0 2 0} means that the gnerated clock first rise will be source first edge and it shifted by 0ns. The again second 1 in -edge{1 1 3} means generated clock also has its falling edge at 1st edge of source clock but shifted by 2ns. And finally 3 means gnerated clock has it next rising edge at third edge of source clock shifted by 0ns and so on. In this way pulse is generated from the source clock.<br />
-In some cases gnerated clock has two possible timing paths from the source clock one could be sequential and second could be combinational. As STA tool mostly are pessimistic so they prefferably follow the sequential path. So in order to check the timing or latency along the combination path too we can provide an extra flag -combinationa in the create_generated_clcok.
+In some cases generated clock has two possible timing paths from the source clock one could be sequential and second could be combinational. As STA tool mostly are pessimistic so they prefferably follow the sequential path. So in order to check the timing or latency along the combination path too we can provide an extra flag -combinationa in the create_generated_clcok.
 
 ![day1 25](https://user-images.githubusercontent.com/43933912/219881950-61fb08d4-5549-4233-95e9-9cfc1b1cfd81.png)
 
-## Boundary Constraints
+## Port Delays and Boundary Constraints
+Port delays are defined by two commands 
+1) set_input_delay
+2) set_output_delay
+Whene we have design then this need to connect to the outside world in this case the flop that are connected to the input port/output port via some logic, then in order to calculate delay inside of the design STA tool need port delays.<br />
+For example for input port to flop path delay calculation we need to define the set_input_delay as 4ns as shown in below figure.
+
+![Input_delay](https://user-images.githubusercontent.com/43933912/219882980-d1ecec2e-587b-46f6-995c-d7cc60fb5931.png)
+
+Similarly, for flop to output port path delay calculation we need to provide set_output_delay constraint.
+
+![Output_delay](https://user-images.githubusercontent.com/43933912/219883095-eff9ef83-818c-4c8b-8d28-c834a99f29b9.png)
+
+Along with these commands additional flags such as -clock is also provided which tells the tool it calculate timing with respect to which clcok. Another flag that is -add_delay which is used incase we have to define port delays with respect to more then clocks. For setup check -max and for hold -min flags are also used respectively.
+Additional boundary constraints are also provided to the STA tool to define the input transition specification as the input comming from the outside of the design so tool needs input/output transition specifications to accurately calculate the timing delays.<br />
+Input transition specification can be provided by following methods:
+1) set_drive -this specifies the resistance value at the boundary 
+2) set_driving_cell - this specifies the cell driving the port and from which input transition time can calculated.
+3) set_input_transition - It directly specifies the transition time value.
+
+![day1 26](https://user-images.githubusercontent.com/43933912/219883606-da9e7f3f-72ab-4da3-8a87-fe386b2f7a08.png)
+
+Similarly for calculating transition time at the output port following methods are used to specify the transition time in terms of load driven from the output port.
+1) set_port_fanout_number - Here load is specified by the number fanout pins
+2) set_fanout_load - Here load is specified in the number of standard cell/buffers
+3) set_load - Here load is specified in terms of capacitance.
+
+![day1 27](https://user-images.githubusercontent.com/43933912/219883845-ce01eb5d-82e3-43cc-9266-36a62b2647a7.png)
 
 ## Day-1-Labs
 ### OpenSTA Introduction
