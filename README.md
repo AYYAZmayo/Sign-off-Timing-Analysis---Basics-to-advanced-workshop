@@ -48,12 +48,52 @@ A combinational logic block is shon in above image as pink block. Each logic blo
 It is that a stable data should be available at the D pin of a sequential device/flip flop "some time" before the clock edge which captures the data. This "some time" is characteristic of a flip flop defined in the cell/logic library and it is dependent on a technology node.
 
 ![day1 6](https://user-images.githubusercontent.com/43933912/219853139-d59a2219-8316-440b-835c-2345ff68c1cd.png)
+
 This enforces max-delay on the data path. If the data arrives before the setup time window then there is no setup violation and correct is captured at the flop. Whereas if the data arrives late and reaches close to the clock edge then it violates the setup constraint and a setup violation occurs as shown in the below figure.
 
 ![day1 8](https://user-images.githubusercontent.com/43933912/219856128-ca382f6a-95a1-4e7f-9d37-dfb44799dc48.png)
 
- 
+ ### Hold Check
+It is, data should  stable for some minimum time at the input of a flip flop after the clock edge that captures the data. It is characteristic of a flop and defined in the logic library and it is also dependent on a technology node.
+
+![day1 7](https://user-images.githubusercontent.com/43933912/219864578-035c6183-a059-4adb-929c-ea7f6a1cd7bb.png)
+
+This enforces min delay on the data path. If the data remains stable for some time (called hold time of flop) after the clock edge then there is no hold violation and capturing flop acurately captures the data. If data does not remain stable after the clock edge for sometime/hold-time then a hold violation will occur. It happen when the delay between two flops is so low that at the capturing edge when second flop is capturing the previous data, lauching flop starts lauching new data and it may over writes the previous data and as result a hold violation will occurs.
+
+![day1 9](https://user-images.githubusercontent.com/43933912/219865801-c4c35abb-84a0-403d-b268-834e7ca9dd1f.png)
+
 ## Slack Calculation
+There is two type slack one is with respect to the setup time that is called setup slack and second is hold slack which is with respect to hold check.
+###  Setup Slack Calculation
+setup slack is equal to the difference of data required time and data arrival time that is:
+                                  Setup slack =Data Required Time - Data Arrival Time
+here,
+data Required Time is equal to the actual Time in which data should have arrived at the end point of a timing path. Whereas data arrival time is a time at which data is actaully arriving at the end point.
+For example, in below diagram data starts from a start point and travels through a series of logic blocks and finally reaches at the end point,  then total time taken by the data in traveling from start point to endpoint is called the arrival time of the data.
+
+![day1 10](https://user-images.githubusercontent.com/43933912/219866784-0c1663ad-cb6d-4e25-a2c1-872416da92dc.png)
+
+A single end point can also have multiple data arrival times from a single start point depending upon the available timing paths between them e.g. in belwo figure there are two timing paths are existing between start and end points so here we have two arrival times for same end point.
+
+![day1 11](https://user-images.githubusercontent.com/43933912/219868643-97733394-feb5-4063-ba23-af979287186b.png)
+
+On other hand data required time is a function of required frequency at which the design is supposed to work. It is also a function of setup time of the end point flop. 
+So, the setup slack is the difference of required time and arrival time of data. If the data arrives earliar then the required then our slack is postive that means our design is meeting the timing required and can operate on the rquired frequency as shown in below figure. If arrival time equal to required time then design is just meeting the frequency requirements.
+
+![day1 12](https://user-images.githubusercontent.com/43933912/219869084-d182be0a-99f4-43d6-83e9-63a3b61a4c43.png)
+
+If data arrives later than the required time then we going to have a negative setup slack that means we are not meeting the rewuired timing of the design and it will not work on the required frequency.So, we have to fix the setup slack. Let's suppose we have below logic path diagram.
+
+![day1 14](https://user-images.githubusercontent.com/43933912/219869843-892997cb-9d1c-42b6-9844-92df88cb54a4.png)
+
+Here we have setup time Fsetup of the capturing flop and Time period of Tperiod. From figure we can see that our required time is:
+                                                  Required time = Tperiod - Fsetup
+                                                  Arrival time = clock-to-Q delay(Tcq) + logic path delay(Tlpd)
+So, for a positve slack:
+                                                  Arrival time < Required time 
+                                                  clock-to-Q delay(Tcq) + logic path delay(Tlpd)   <   Tperiod - Fsetup
+
+
 ## SDC Overview
 ## Clocks
 ## Generated Clocks
