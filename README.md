@@ -9,7 +9,30 @@ For static timing analysis we need minimum below inputs that are provide to an S
 2) SDC or Constraints files - Timing constrins that describe on which frequency we want to check timing of the design
 3) Logic liberaries- They contains the cell delays and transition times for the logic cells like AND, or gates and flip flops etc.
 ## Timing Paths
+In order to analyze the design STA tool breaks down the design into smaller parts that are known as timing paths. It breaks the logic/paths at ports and at between sequential logic elements. Let's understand this with help of a simple image example. Here we have a simple logic diagram which contains two input port "IN" , output port "OUT", input clock port "CLK" and some in between two flip flops or sequential elements as shwon in bewlo diagram.
+
+![day1 1](https://user-images.githubusercontent.com/43933912/219847803-2f5f099a-5b4a-4ee2-b48f-9a2ff42aaab3.png)
+
+The whole logic is broken down into 4 smaller parts/timing paths which described her with the help of above diagram.
+1) Timing path 1- Input port to Output port timing path having some logic in between them.
+2) Timing path 2- Input port to D pin of sequential element or flip flop having some logic in between them.
+3) Timing path 3- REG to REG Path that is from the clock-pin of first register to the D-pin of second register having some logic in betweem them.
+4) Timing path 4- REG to Output port path that is from the clock pin of a flop to the output port of the design having some logic in between them.
+
+![day1 2](https://user-images.githubusercontent.com/43933912/219848292-5fd03767-8a0b-4097-a863-1bd4503e2d1e.png)
+
 ## Timing Path Elements
+Each timing path has three basic elements.
+1) Start Point- Its a point from where usally data is launched by clock edge, or where data must be available at a specific time. It is usually Input port or register clock pin. For example for path-1 in below image we have a start point as Input port "IN".
+
+![day1 3](https://user-images.githubusercontent.com/43933912/219848714-69f8d8f4-b5dd-4319-a2d0-1a729aaed804.png)
+
+Similarly for path 3- we have the start point as the clock pin of first register. In path 2 again we have a start point as Input port "IN". In 4th path which is from register to output port the start point is the clock pin of the register.
+
+![day1 2](https://user-images.githubusercontent.com/43933912/219849017-93af6326-fe76-4158-aa63-53fe74c8cf81.png)
+
+2) End point- It is a point at which data is captured at a clock edge. It is usually the ouput port or the input D pin of a register. For-example in below figure the end path is 
+3) Combinational logic
 ## Setup and Hold Checks
 ## Slack Calculation
 ## SDC Overview
