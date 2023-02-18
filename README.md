@@ -136,7 +136,7 @@ set_disable_timing<br />
 set_max_delay<br />
 set_min_delay<br />
 ## Clocks
-For STA anaylysis clcoks are defined with help of creat_clock command. This takes some extra flags that defines further attributes of the clock e.g -period is used define the clock period, -waveform is used to define the rise and falling edges of the clock as shwon in the belwo figure. Here, period of the clock is 10 ns, and -waveform{2 4} represents that first rising edge will occur at 2 ns and first falling edge will occur at 4 ns. And in the same way clock goes on. Here {c1 ck} are representing the port or with of the design on this clock will attach.
+For STA anaylysis clcoks are defined with help of creat_clock command. This takes some extra flags that defines further attributes of the clock e.g -period is used define the clock period, -waveform is used to define the rise and falling edges of the clock as shwon in the belwo figure. Here, period of the clock is 10 ns, and -waveform{2 4} represents that first rising edge will occur at 2 ns and first falling edge will occur at 4 ns. And in the same way clock goes on. Here {c1 ck} are representing the port or wire of the design on this clock will attach. If no port/wire is defined then a virtual clock is defined which connected to the design clock ports.
 
 ![day1 16](https://user-images.githubusercontent.com/43933912/219875735-c3db3d81-512f-4fa3-ba62-5e0f62ae2809.png)
 
@@ -148,11 +148,46 @@ But there is a condition on these multiple rise and fall edges that is in one fu
 ![day1 18](https://user-images.githubusercontent.com/43933912/219876157-0992b903-9f6c-4030-9cbd-afb843d29138.png)
 
 It is always not necessary to -waveform option while defing the clock. We can also skip this option. If we skip this -waveform then the rise and fall edge of the clock will occur at 0 and 50% duty cycle. Formexample in 10ns time period clock we will have a rise edge at 0ns and falling edge at 5ns respectively.
+
 ![day1 19](https://user-images.githubusercontent.com/43933912/219876315-35b7bcd8-3c0a-45d8-8da8-60fc70660c2b.png)
 
- 
+ If in an IP we have two clocks which provided to one net of the IP using a MUX select as shown in below figure. In such a case we can perform STA of this IP by providing an extra flag -add switch to the creat_clock command.
+
+![day1 20](https://user-images.githubusercontent.com/43933912/219878596-c56d845e-8a31-4773-a57b-625f66cdd872.png)
+
+
 ## Generated Clocks
+Generated clocks are the clocks which are created inside the design and they are usually divided or multiplied version of the primary clock of the design. So, to define such clocks create_generated_clock command is used. There are some extra options are also being used in the below figure along with the command create_generated_clcok.
+1) -devide_by 2 
+This is actually provided to tell the STA tool that the gnerated clock has a frequency devide by 2 or its period is multiplied by 2. 
+2) -source C1 
+This is telling the STA tool the generated clock has been generated from a clock source C1 (that is primary clock)
+3) -master_clcok CLK1
+If our design has more then one clocks such as CLK1,CLK2, CLK3 connected to the net C1, then out of these STA tool only follows CLK1 out of them.
+4) {GC2 GC1}
+GC1 and GC2 are the gnerated clcoks nets.
+
+![day1 21](https://user-images.githubusercontent.com/43933912/219880072-e8bc1ac4-a035-4b70-bcfe-fb6d8416c75e.png)
+
+For defining the source clcok net, any net can be used along the to the generated clocks as long as there is a connection exists to the main clcok net C1.
+
+![day1 22](https://user-images.githubusercontent.com/43933912/219881027-c9949990-29d3-47a5-89f2-ec53a52a4a5c.png)
+
+For generating complex generated clocks from the source clock an extra flag (-edges) is used in which odd number of edges are provided of the source clock. For example in below figure DIV3 is gnerated clock which is being generated from the source SYSCLK. Here -edges{1 5 7} is provided which means that gnerated clock has first rise as same first rise edge of the source, then it has falling edge at 5 edge of the source clock and then it has again rising edge at the 7th edge of the source clock.
+
+![day1 23](https://user-images.githubusercontent.com/43933912/219881360-4f93258f-99e5-472a-ba62-02df94d011ed.png)
+
+For generating more complex wavefors an flag -edge_shift can also be used along with -edges for generated clocks as shon in below figure.It is uually used for gnerating pulses.
+
+![day1 24](https://user-images.githubusercontent.com/43933912/219881544-603866b4-0848-4fa8-8d95-9aa8fcf88306.png)
+
+Here -edges {1 1 3} -edge_shift {0 2 0} means that the gnerated clock first rise will be source first edge and it shifted by 0ns. The again second 1 in -edge{1 1 3} means generated clock also has its falling edge at 1st edge of source clock but shifted by 2ns. And finally 3 means gnerated clock has it next rising edge at third edge of source clock shifted by 0ns and so on. In this way pulse is generated from the source clock.<br />
+In some cases gnerated clock has two possible timing paths from the source clock one could be sequential and second could be combinational. As STA tool mostly are pessimistic so they prefferably follow the sequential path. So in order to check the timing or latency along the combination path too we can provide an extra flag -combinationa in the create_generated_clcok.
+
+![day1 25](https://user-images.githubusercontent.com/43933912/219881950-61fb08d4-5549-4233-95e9-9cfc1b1cfd81.png)
+
 ## Boundary Constraints
+
 ## Day-1-Labs
 ### OpenSTA Introduction
 ### Inputs to openSTA
