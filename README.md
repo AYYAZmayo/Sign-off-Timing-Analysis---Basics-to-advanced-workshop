@@ -86,16 +86,71 @@ If data arrives later than the required time then we going to have a negative se
 
 ![day1 14](https://user-images.githubusercontent.com/43933912/219869843-892997cb-9d1c-42b6-9844-92df88cb54a4.png)
 
-Here we have setup time Fsetup of the capturing flop and Time period of Tperiod. From figure we can see that our required time is:
-                                                  Required time = Tperiod - Fsetup
-                                                  Arrival time = clock-to-Q delay(Tcq) + logic path delay(Tlpd)
-So, for a positve slack:
-                                                  Arrival time < Required time 
-                                                  clock-to-Q delay(Tcq) + logic path delay(Tlpd)   <   Tperiod - Fsetup
+Here we have setup time Fsetup of the capturing flop and Time period of Tperiod. From figure we can see that our required time is: <br />
+                                                  Required time = Tperiod - Fsetup <br />
+                                                  Arrival time = clock-to-Q delay(Tcq) + logic path delay(Tlpd) <br />
+So, for a positve slack: <br />
+                                                  Arrival time < Required time <br />
+                                                  clock-to-Q delay(Tcq) + logic path delay(Tlpd)   <   Tperiod - Fsetup <br />
+## Hold slack
+Hold slack is the difference of data arrival time and data required time. For understanding the slack calculation lets focus on the below diagram that has a REG to REG timing path diagram.
 
+![day1 15](https://user-images.githubusercontent.com/43933912/219871017-11f96593-8e73-4a46-8464-2e8b57d16d8d.png)
 
+Here, <br />
+                                                 Required time = Hold time of the flop(Thd) <br />
+                                                 Arrival time= Tck->Q + Combo_logic_delay(Tlpd) <br />
+                                                 Hold Slack = Arrival time - Required time <br />
+                                                 Hold slack = Tck->Q + Combo_logic_delay(Tlpd) - Hold time of the flop(Thd) <br />
+For hold slack to be postive  data Arrival time should be greater than the hold time of the flop.<br />
 ## SDC Overview
+SDC or synopsys design constraints are one of important inputs that is provided to the STA tool for static timing analysis. These are actually a set of commands that are provided to the STA tools. For example here some set of commands/constraints based on thier functions in the STA tool:
+1) Constraints for Timing- They specify the parameters that effects the operating frequency of the design examples are:
+Creat_clock <br />
+Create_generated_clock<br />
+Set_clock_groups<br />
+Set_clock_transition<br />
+set_timing_derate etc.<br />
+2) Constraints for Area and Power- They specify the restrictions for the area and power of the design examples are:
+set_max_area<br />
+set_max_dynamic_power etc.<br />
+3) Constraints for Design Rules- They are the requirements of the target technolgy examples are:
+set_max_capacitance<br />
+set_min_capacitance<br />
+set_max_transition<br />
+set_max_fanout <br />
+4) Constraints for interfaces- They specify the assumptions on the boundary interfaces of the design e.g.
+set_driving_cell<br />
+set_input_delay<br />
+set_output_delay<br />
+set_load etc.<br />
+5) Constraints for specific modes and configurations- These are actually assumptions on the values allowed e.g
+set_case_analysis<br />
+set_logic_dc<br />
+set_logic_one<br />
+set_logic_zero <br />
+6) Exceptions on design constraints-They relax the requirements set other constriants or by set by default by STA tool for analysis e.g
+set_false_path<br />
+set_multiplecycle_path<br />
+set_disable_timing<br />
+set_max_delay<br />
+set_min_delay<br />
 ## Clocks
+For STA anaylysis clcoks are defined with help of creat_clock command. This takes some extra flags that defines further attributes of the clock e.g -period is used define the clock period, -waveform is used to define the rise and falling edges of the clock as shwon in the belwo figure. Here, period of the clock is 10 ns, and -waveform{2 4} represents that first rising edge will occur at 2 ns and first falling edge will occur at 4 ns. And in the same way clock goes on. Here {c1 ck} are representing the port or with of the design on this clock will attach.
+
+![day1 16](https://user-images.githubusercontent.com/43933912/219875735-c3db3d81-512f-4fa3-ba62-5e0f62ae2809.png)
+
+A single clock waveform can also have multiple rising and falling edges in the same clock period as shown in the below figure.
+
+![day1 17](https://user-images.githubusercontent.com/43933912/219876104-bafc045a-1c7d-48d8-a5ec-db5fac4d297b.png)
+
+But there is a condition on these multiple rise and fall edges that is in one full clock period there should even number of rise and fall edge e.g
+![day1 18](https://user-images.githubusercontent.com/43933912/219876157-0992b903-9f6c-4030-9cbd-afb843d29138.png)
+
+It is always not necessary to -waveform option while defing the clock. We can also skip this option. If we skip this -waveform then the rise and fall edge of the clock will occur at 0 and 50% duty cycle. Formexample in 10ns time period clock we will have a rise edge at 0ns and falling edge at 5ns respectively.
+![day1 19](https://user-images.githubusercontent.com/43933912/219876315-35b7bcd8-3c0a-45d8-8da8-60fc70660c2b.png)
+
+ 
 ## Generated Clocks
 ## Boundary Constraints
 ## Day-1-Labs
