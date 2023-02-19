@@ -217,8 +217,62 @@ Similarly for calculating transition time at the output port following methods a
 
 ## Day-1-Labs
 ### OpenSTA Introduction
+OpenSTA is a gate level static timing verifier. As a stand-alone executable it can be used to verify the timing of a design using below standard file formats.<br />
+* A Gate level netlist in Verilog 
+* Liberty library
+* SDC timing constraints
+* SDF delay annotation
+* SPEF parasitics<br />
+OpenSTA is a Static Timing analysis (STA) tool. An STA tool takes design, standard cell and SDC constraints as input and perform timing checks on the design.
+It calculates Delay based on Integrated Dartu/Menezes/Pileggi RC effective capacitance algorithms. It can perform different timing checks on the verilog netlist for example:
+* Report timing checks -from, -through, -to, multiple paths to endpoint
+* Report delay calculation
+* Check timing setup etc.
+When we launch the openSTA tool executable in the terminal we can get the list of possible commands by typing help in the command prompt.
+
+![day1 28](https://user-images.githubusercontent.com/43933912/219910088-2fa59ee3-527c-45f8-9012-4701a95b35fa.png)
+
 ### Inputs to openSTA
+For performing a timing analysis using openSTA we have to provide following inputs to the tool:
+1) Standard Cells Library
+* It is provided in .lib format using read_liberty command
+![day1 30](https://user-images.githubusercontent.com/43933912/219916453-56dbe784-960b-4ec4-8d07-8a159ac1c925.png)
+
+2) Design
+* Usually provided in Verilog format using read_verilog command e.g we have a design netlist named simple.v. It contains a number of standard cells
+
+![day1 31](https://user-images.githubusercontent.com/43933912/219916635-737d01ca-8f8d-4013-b26f-883ab948e29c.png)
+
+3) SDC timing constraints
+* Timing contraints are provided in sdc file format using the command read_sdc simple.sdc
+
+![day1 32](https://user-images.githubusercontent.com/43933912/219916715-119b8825-cc55-468a-bc75-4745c4bf9ecf.png)
+
 ### Constraints Creation and OpenSTA Runscript
+#### Constraints Creation
+Contraints are created using sdc commands a list of essentail contrains is given here:
+1) Defining clocks- Lets define a clock with period 50 on port tau2015_clk
+create_clock –period 50 –name tau2015_clk [get_ports tau2015_clk]
+2) IO delays- Primary ports are defined with delays with associated clock: tau2015_clk
+set_input_delay 5 –max –rise [get_ports inp1] –clock tau2015_clk
+set_output_delay -10 –min –fall [get_ports out] –clock tau2015_clk
+3) Input transitions by environmental factors
+set_input_transition 10 –min –rise [get_ports inp1]
+4) Capacitive load on output pin
+set_load –pin_load 4 [get_ports out] <br />
+#### runScript
+In runscript you can define all the commands you want to run in the openSTA tool. Tool will execute each command sequentially in order. There are some commands which are executed in parallel in some cases. Runscript is in tcl format.
+
+![image](https://user-images.githubusercontent.com/43933912/219918372-b242c80e-240e-416d-8b75-3b89d5a8ce1a.png)
+
+Running the openSTA using command “sta run.tcl -exit | tee run.log” for simple.v netlist.
+
+![day1 33](https://user-images.githubusercontent.com/43933912/219920677-2ad426ee-afcb-4134-98d5-642bcc9a2e9e.png)
+
+This generates a set of timing reports in the run.log file where we can analyze whether the design slack is met or on not on the required frequency.
+
+![day1 34](https://user-images.githubusercontent.com/43933912/219920960-3a282b35-94e9-4d1b-af6d-7fa4d3062330.png)
+
 # Day-2
 ## Other Timing Checks
 ## Design Rule Checks
