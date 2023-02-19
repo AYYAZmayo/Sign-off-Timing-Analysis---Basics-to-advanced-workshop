@@ -458,6 +458,30 @@ In case of non unate sense the change of output with respect to the input is un-
 ![day3 20](https://user-images.githubusercontent.com/43933912/219956690-2f3b3048-3532-4f8b-b5c1-9aba4df046d7.png)
 
 ## Cell Delays and Clock Network
+### Cell delays
+cell delays are function on input transition time and output load or capacitance. It is given in the technolgy library in the form of look up tables. And STA tool depending upon these two values calculates the cell delays. Typically cell delays or prpagation delays are calculated from the input side to to output side. That is if  input changes from 10% to 90% that is input slew then how much time the output takes in going from 10% to 90% that is known as cell delay or propagation delay.
+
+![day3 10](https://user-images.githubusercontent.com/43933912/219963618-23c6badc-2f45-4e37-9c00-cf21d4cbc36d.png)
+### Positive clock skew
+when we clock comes from a source it also has buffers and inverter along its path due which causes delay insertion in the clock path, If capture clock has more delay then launch clock or capture clock is reaching later than lauch clock then this time difference is called positive clock skew. Positive clock skew may add flexibility in the setup check because it increases the setup time window.
+
+![day3 11](https://user-images.githubusercontent.com/43933912/219964062-d76c5d45-f1f6-472f-b952-20952baf7b44.png)
+
+### Negative clock skew
+ If capture clock is arriving earliar than delay then launch clock, then this difference called negative clock skew. In this setup time window reduces.
+
+![day3 112](https://user-images.githubusercontent.com/43933912/219964456-65aba6e9-6337-4cb9-aa54-4078d6dde403.png)
+### Clock Latency
+The delay from the clock source (that is PLL) to the clock definition point is called the source latency. Whereas the delay from the clock definition point to the clock pin of the flop is called the network latency.
+
+![day3 13](https://user-images.githubusercontent.com/43933912/219964812-b6fc4c0f-268f-42a7-b305-a53c03238a6f.png)
+
+### Clock jitter
+Clocks are not ideal because of the physics. So, if ideally you we say that the clock edge starts at rising edge at 0ns and it goes to rise again at 10ns. But actually and in reality clock has some uncertainity in rising of the edge at 0ns it may rise some time before 0ns or some time after the 0ns. This uncertainity in clock edges is called the clock jitter.
+
+![day3 14](https://user-images.githubusercontent.com/43933912/219965248-4e0fc00a-a817-49f5-a880-acfe2febe8cb.png)
+
+ 
 ## Setup and Hold Detailed
 ## STA Text Report
 ## Day-3 Labs
