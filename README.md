@@ -275,10 +275,64 @@ This generates a set of timing reports in the run.log file where we can analyze 
 
 # Day-2
 ## Other Timing Checks
+Other then conventional setup and hold checks we also have some timing checks that are crucial for timing verification of a design, these are
+* clock gating check - these are checked on the "en" pin of the clock gating. It could be on AND , OR or any  other gate base clock gating.
+* Recovery and Removal checks- Like setup and hold we also have recovery and removal checks that corresponds to async pin like clr pin or reset of a flop. They corresponds to the deassertion of reset with respect to the clock edge. 
+* Data to Data checks- They are performed base upon data pins of a cell.
+
+![day2 1](https://user-images.githubusercontent.com/43933912/219922189-34b5ec02-1865-4165-8941-082214607501.png)
+
 ## Design Rule Checks
+We also have some Design rule checks that correspond to the technology node. They are of following types
+1) Slew/Transition anaylsis check
+There is of two type slew/transion times in design one is fall-slew and second is rise slew time.
+* Fall-slew is the time taken by the signal in falling from 70% of vdd to 30% of vdd.
+* Rise-slew is the time taken by the signal in rising from 30% of vdd to 70% of vdd.
+
+![day2 2](https://user-images.githubusercontent.com/43933912/219922485-05620bc3-a59a-4089-b8e6-33b031d06d0f.png)
+
+So, why these check are needed? It because cells present in technology library they are have a particular transition time or slew. STA tool make sure that the slew in our design should not violates the any standard cell slew otherwise the cell will not work properly and give incorrect delays. In STA there is a specific constraint that we can provide in order to ensure that these slew/transition value have to be between some Max and min values.
+
+2) Load Analysis check
+Here we can specify what could be maximum or minimum capacitance on the ports or net. And we can also specify the fanout load on ports and output pins.
+
+3) Clock Skew analysis check
+In STA we also check clock skew analysis. Slew and skew are two different things, slew means the transition time or how much time taken by the signal from 1 to zero that means fall time or from 0 to 1 that is rise time. Whereas skew is the difference in delay of the clock at different points.
+
+![day2 4](https://user-images.githubusercontent.com/43933912/219931971-4edd83ca-b512-45e7-acc7-2779a90c224b.png)
+
+For example in above  figure the CK_L the lauch clock arrives earliar because of single buffer delay whereas CK_C the capture clock arrive later due to three buffer delays. So, there is a difference in delay of launch clock and caputre clock at different points. If capture clock has more delay then launch clock then the skew is +Ve as in below figure. 
+
+![day2 4](https://user-images.githubusercontent.com/43933912/219931977-d8219db2-17d3-4540-885a-bddb62c7018b.png)
+
+On the other hand if launch clock CK_L has more delay then the capture clock CK_C then the clock skew would be -Ve.
+
+![day2 5](https://user-images.githubusercontent.com/43933912/219932112-78afbc14-8880-4f08-91bd-1b40ba143694.png)
+
+4) Pulse width Checks
+Minimum pulse width check is performed to ensure that the clock is wide enough to get a stable output from a cell/flop. That means that there is a minimum pulse width is required at the pin of flop to operate properly and provide a stable output. Lets suppose we have an ideal clock as shown in below figure, when the clock travels through the path it's pulse width shrinks. As in below figure the fall edge of the clock slightly shrinks. If this shrinkage causes the width to reduce below a specified threshold value we can have a minimum pulse width violation 
+
+![day2 6](https://user-images.githubusercontent.com/43933912/219932779-2da6ede2-ae13-4d8d-96ac-3dde000bd091.png)
+
 ## Latch Timing 
-## SAT Text Report
+In flop base designs data is launched and captured at the clock edges. In latch base design Latch is level sensitive, data captured or lauched for complete complete level of the clock. Latch base design provide more timing flexibility as shown in below figure. Here we have +Ve level latch that opens at the positve edge and remains open till the falling edge of the clock that is it remains transperant and can receive the data that much extra time as compare to flop base designs which only captures the data only at the edge of clock.
+
+![day2 7](https://user-images.githubusercontent.com/43933912/219935720-afd6764d-99a5-4120-84b4-97ec4f852e8f.png)
+One of important feature that for Latch base designs can be used is time borrowing. Like in belwo figure if we have large logic delay in between the first flop and Latch and logic delay is less in between latch and second flop. Then to handle the large delay of first logic block the latch borrows time from the second block by keeping itself transparent even after the positve edge of clock. 
+
+![day2 8](https://user-images.githubusercontent.com/43933912/219936224-94eb20d0-f3f8-4d25-8457-3c6dc4e5f7b6.png)
+ 
+## STA Text Report
+STA tool does the analysis and converts the logic into nodes, cells and arc for reporting as shown in belwo diagram. Here Clock pins and input output ports cells like flop are acts as nodes and the arrow from a input pin to output pin is representing the cell timing arc similarly we can have an arrow from ouput pin to input pin of next cell it is called a net arc.
+
+![day2 9](https://user-images.githubusercontent.com/43933912/219937027-4318181f-f7ee-4875-8431-b6ad1ddefb59.png)
+
+Each of these nodes and arcs are represented into STA text report along with start point, end point, transition time, cell delays and slack.
+
+![day2 10](https://user-images.githubusercontent.com/43933912/219937306-adbbb773-d71a-414d-b655-2c9de0681248.png)
+
 ## Day-2 Labs
+
 ### Liberty Files
 ### SPEF
 ### Timing Reports
