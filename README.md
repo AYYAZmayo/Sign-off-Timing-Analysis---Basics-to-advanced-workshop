@@ -428,6 +428,34 @@ Based on above rule we can see in belwo diagram that our hold chec is performed 
 
 Hence in case of multiple clocks, all the clocks are expanded to one common period and then base on this period setup check is performed on the most restrictive setup and then base on setup check the hold is performed.
 ## Timing Arc and Timing Sense
+### Timing Arcs
+There are two type of timing arcs one is cell arcs and other are net arc. Cell arc are simply the input to output connections in the cell, In each library these arc are present which tells which input is connected to which output. They describe what are input to output delays and what are the transition times. Whereas net arcs are the cell to cell connections, which describe the cell to cell delays.
+
+![day3 5](https://user-images.githubusercontent.com/43933912/219956033-55722ac9-2205-4e84-8d10-3c7bac77cc6b.png)
+* Combinational arc are the arc that are present in pure combinational element.
+
+![day3 6](https://user-images.githubusercontent.com/43933912/219956382-365408ef-be74-4c55-b525-b75da0eed87d.png)
+
+* Sequentail arc are the arcs that present in the sequential elements.
+
+![day3 7](https://user-images.githubusercontent.com/43933912/219956401-3687fc00-5af0-4167-94ae-2c32eb395f92.png)
+
+### Timing sense
+There are three type of timing sense for the timing arcs
+1) Positve unate
+In postive unate sense if input is rising then output also rise in the same direction, similarly if input falls then output also falls in the same direction.
+
+![day3 8](https://user-images.githubusercontent.com/43933912/219956569-0724a9f0-b0f1-4a62-ad9e-1dd142681d5d.png)
+
+2) Negative unate
+In negative unate sense if input rises then out falls in the opposite direction and vice versa.
+
+![day3 9](https://user-images.githubusercontent.com/43933912/219956622-82ba17da-4808-4a1e-a123-913662443834.png)
+
+3) Non Unate 
+In case of non unate sense the change of output with respect to the input is un-pridictable it may rise or fall with respect to the input.
+
+![day3 20](https://user-images.githubusercontent.com/43933912/219956690-2f3b3048-3532-4f8b-b5c1-9aba4df046d7.png)
 
 ## Cell Delays and Clock Network
 ## Setup and Hold Detailed
