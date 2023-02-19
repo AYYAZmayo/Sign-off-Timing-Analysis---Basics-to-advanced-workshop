@@ -251,15 +251,15 @@ For performing a timing analysis using openSTA we have to provide following inpu
 ### Constraints Creation and OpenSTA Runscript
 #### Constraints Creation
 Contraints are created using sdc commands a list of essentail contrains is given here:
-1) Defining clocks- Lets define a clock with period 50 on port tau2015_clk
-create_clock –period 50 –name tau2015_clk [get_ports tau2015_clk]
-2) IO delays- Primary ports are defined with delays with associated clock: tau2015_clk
-set_input_delay 5 –max –rise [get_ports inp1] –clock tau2015_clk
-set_output_delay -10 –min –fall [get_ports out] –clock tau2015_clk
-3) Input transitions by environmental factors
-set_input_transition 10 –min –rise [get_ports inp1]
-4) Capacitive load on output pin
-set_load –pin_load 4 [get_ports out] <br />
+1) Defining clocks- Lets define a clock with period 50 on port tau2015_clk <br />
+`code()` create_clock –period 50 –name tau2015_clk [get_ports tau2015_clk]<br />
+2) IO delays- Primary ports are defined with delays with associated clock: tau2015_clk<br />
+`code()` set_input_delay 5 –max –rise [get_ports inp1] –clock tau2015_clk<br />
+`code()` set_output_delay -10 –min –fall [get_ports out] –clock tau2015_clk<br />
+3) Input transitions by environmental factors<br />
+`code()` set_input_transition 10 –min –rise [get_ports inp1]<br />
+4) Capacitive load on output pin<br />
+`code()` set_load –pin_load 4 [get_ports out] <br />
 #### runScript
 In runscript you can define all the commands you want to run in the openSTA tool. Tool will execute each command sequentially in order. There are some commands which are executed in parallel in some cases. Runscript is in tcl format.
 
