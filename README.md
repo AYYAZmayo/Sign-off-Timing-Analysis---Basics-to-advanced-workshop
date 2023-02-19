@@ -409,7 +409,26 @@ Path Type: max
 ```
 # Day-3
 ## Multiple Clocks
+Uptill now we have performed STA on single clock and we performing setup and hold check on single clock. But we can also have multiple clocks in our design. In case of multiple clocks setup and hold check are also performed. For this, all the clocks are expanded on common base period(The base period is defined as the least common multiple of the clock periods involved). Then setup is performed base on the most closest launch and capture edges, that is most restrictive setup is used for setup check.
+
+![day3 1](https://user-images.githubusercontent.com/43933912/219953687-395b40ac-88ca-4a0a-b86b-f7569f9794bd.png)
+
+Similarly for hold check also the most restrictive hold is used. But it is chosen base on setup check. There two rules that are followed for peforming the hold check.
+1) Data launched by current setup launch edge must not be captured by the previous capture edge.
+
+![day3 2](https://user-images.githubusercontent.com/43933912/219953900-86ce007e-2439-4412-b8be-01344a8ead50.png)
+
+2) Data lauched by next setup edge must not captured by current setup capture edge.
+
+![day3 3](https://user-images.githubusercontent.com/43933912/219954159-be6171c8-e09b-40c5-9c36-88b20a2157f8.png)
+
+Based on above rule we can see in belwo diagram that our hold chec is performed on previous edge for half cycle setup check.
+
+![day3 4](https://user-images.githubusercontent.com/43933912/219955015-671511bb-4745-496a-ab06-9ff494ce6727.png)
+
+Hence in case of multiple clocks, all the clocks are expanded to one common period and then base on this period setup check is performed on the most restrictive setup and then base on setup check the hold is performed.
 ## Timing Arc and Timing Sense
+
 ## Cell Delays and Clock Network
 ## Setup and Hold Detailed
 ## STA Text Report
