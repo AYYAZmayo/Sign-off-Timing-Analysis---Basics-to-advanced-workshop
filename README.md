@@ -480,10 +480,88 @@ The delay from the clock source (that is PLL) to the clock definition point is c
 Clocks are not ideal because of the physics. So, if ideally you we say that the clock edge starts at rising edge at 0ns and it goes to rise again at 10ns. But actually and in reality clock has some uncertainity in rising of the edge at 0ns it may rise some time before 0ns or some time after the 0ns. This uncertainity in clock edges is called the clock jitter.
 
 ![day3 14](https://user-images.githubusercontent.com/43933912/219965248-4e0fc00a-a817-49f5-a880-acfe2febe8cb.png)
-
- 
 ## Setup and Hold Detailed
+As we know setup check is that data should arrive at the D pin of a flop at least some time before the clcok edge that some time is called Tsetup of the capture flop. To under stand it in detail let look into the belwo logic diagram. In this diagram we have a lauch flop and a capture flop with some logic in between them. 
+
+![day3 15](https://user-images.githubusercontent.com/43933912/220155910-bac746dc-4e68-4cd5-9ad7-c85b56fed66a.png)
+
+Here if we analyze the diagram with respect to setup check then here we have in the arrival path:
+clock to Q delay of lauch flop = Tc2q <br />
+combinational delay of the logic block = Tcomb <br />
+setup time of the caputre flop = Tsetup <br />
+Time period = Tperiod <br />
+So, according to the setup check condtion: <br />
+                                                      Tc2q + Tcomb + Tsetup <= Tperiod <br />
+### Setup check with clock skew
+As we know in clock skew the capture edge comes slightly shifted then the actual edge. So we suppose ther is clock skew of time Tskew between lauch clock and capture clock that is capture clock arrives slightly later i.e Tskew time than the actual capture capture edge as shown in below figure.
+
+![day3 16](https://user-images.githubusercontent.com/43933912/220158251-0a88b49b-1ee2-4dab-bbd0-fcde249bef09.png)
+
+In this case the setup check condtion will becomes: <br />
+                                                      Tc2q + Tcomb + Tsetup <= Tperiod + Tskew <br />
+So, in case clock skew there comes an aditional margin for the setup condition that data can have some more margin of Tskew time so incase if the clock skew is positive then it adds flexibility in the setup check. But if the Tskew is negative then it makes the setup check more pessimistic.
+### Setup check with clock skew and clock Jitter
+As we know the clock jitter is the uncertaininty in the arrival of clock edge. Now Let's suppose we include both clock skew and clock jitter effect in the setup check as shown in the below figure.
+
+![day3 17](https://user-images.githubusercontent.com/43933912/220161287-f52e0dd2-3592-445f-9040-a69f7923e894.png)
+
+Here we suppose that capture clock edge comes slightly earliar due to clock jitter (it may also come later than the actual clock edge too) then based upon jitter delay named here as SU(setup uncertainity) the setup check condtion becomes here:<br />
+                                                      Tc2q + Tcomb + Tsetup <= Tperiod + Tskew - SU<br />
+So, incase of clock jitter the setup check requirement will become more strict because now data have to arrive SU time earliar than before. Hence the setup check will become more pessimistic.
+### Hold check 
+As we know the hold check rule is that the data luched at the next lauch edge should not be catured by the current capture edge. That means the clock to Q delay of the launch flop plus the combinational delay should not be too small that the new data arrives at the cature flop while cature flop is capturing the old data. Let's take the example of below diagram and conclude the condition for hold: 
+
+![day3 18](https://user-images.githubusercontent.com/43933912/220163828-78c27329-1683-4658-a7e5-a221b2aeafc0.png)
+
+So the hold condtion becomes that clock to Q delay plus the combinational delay should be greater than the Hold time of the cature flop. <br />
+                                                     Tc2q + Tcomb >= Thold<br />
+### Hold check with clock skew
+As we  know in case clock skew capture clock comes slightly later than the actual time. So, based on the hold condtion changes as shon in the below figure 
+
+![day3 19](https://user-images.githubusercontent.com/43933912/220164851-a36a4496-bd95-42f4-a4f8-19b8beace7b7.png)
+
+As the cature clock edge comes Tskew time later then in this case the data has to stable for some more extra time that is Tskew.  So the arrival time delay of the launch data have to be more large so that previous data should accurately catured.So, according to above diagram the hold condition in case of clock skew becomes as:<br />
+                                                     Tc2q + Tcomb >= Thold + Tskew <br />
+So, if skew is positive this makes hold check pessimistic and if skew is negative it will make hold check little flexible.
+### Hold check with clock skew and clock Jitter
+As we know the clock jitter is the uncertaininty in the arrival of clock edge. Now Let's suppose we include both clock skew and clock jitter effect in the hold check as shown in the below figure.
+
+![day3 21](https://user-images.githubusercontent.com/43933912/220166087-1b4249c8-fc18-4f13-bb92-2399c0f36927.png)
+
+Here we suppose that capture clock edge comes slightly later due to clock jitter (it may also come ealiar than the actual clock edge too as in the case of setup check ) then based upon jitter delay named here as HU(hold uncertainity) the hold check condtion becomes here:<br />
+                                                       Tc2q + Tcomb >= Thold + Tskew + HSU <br />
+### Different delay values on Paths for setup Check
+As we know the path elements has particular delays and these delay values can very based on technology library like we can have max delays, min delays and on between mariginal delays for the path elements. For setup check STA tool behaves in pessimistic way. That is it takes<br />
+1) Launch clock should come as late as possible
+2) data path delay should be as maximum as possible
+3) Capture clock should come as earliar as possible <br />
+base on above three conditions STA tool performs setup check in more pessimistic way.<br />
+![day3 22](https://user-images.githubusercontent.com/43933912/220168662-1bb19c3f-886e-43e1-b3fb-fca042ceb279.png)
+
+### Different delay values on Paths for Hold Check
+For hold check STA tool also behaves in pessimistic way. That is it takes<br />
+1) Launch clock should come as earliar as possible
+2) data path delay should be as minimum as possible
+3) Capture clock should come as late as possible <br />
+Base on above three conditions STA tool performs setup check in more pessimistic way.<br />
+![day3 23](https://user-images.githubusercontent.com/43933912/220168995-92a85276-fa83-45c3-b360-fc483a4daab8.png)
+
+### Different delay values causes Pessimism
+If we take the example of setup check, we know that STA tool takes Maximum path delay for the in the lauch path and minimun path  delay in the launch path as shown in below figure. Here max path is shown as red and min path as blue.
+
+![day3 25](https://user-images.githubusercontent.com/43933912/220170982-8da8667d-b001-4596-abd1-52cb98a629b8.png)
+
+Here we have common clock path (shown in circle) for both launch path and capture path. This common clock path will have equal delay in the actual silicon so it may have 0.1 or max 0.5 so based on these values it can cause an undue pessimism in either in the launch side or in the capture side. In STA tools there is a technique called called CPPR( clock path pessimism removal) which handles this type of pessimism.
+  
 ## STA Text Report
+STA tool does the analysis and converts the logic into nodes, cells and arc for reporting as shown in belwo diagram. Here Clock pins and input output ports cells like flop are acts as nodes and the arrow from a input pin to output pin is representing the cell timing arc similarly we can have an arrow from ouput pin to input pin of next cell it is called a net arc.
+
+![day2 9](https://user-images.githubusercontent.com/43933912/219937027-4318181f-f7ee-4875-8431-b6ad1ddefb59.png)
+
+Each of these nodes and arcs are represented into STA text report along with start point, end point, transition time, cell delays and slack.
+
+![day2 10](https://user-images.githubusercontent.com/43933912/219937306-adbbb773-d71a-414d-b655-2c9de0681248.png)
+
 ## Day-3 Labs
 ### Understanding Full REG-to-REG STA Analysis
 ### Slack Calculation and Review Setup Check Report
