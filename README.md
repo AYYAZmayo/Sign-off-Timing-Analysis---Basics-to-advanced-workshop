@@ -660,6 +660,20 @@ It is performed using OR or NOR cells. For Active low clock gating check it is t
 ![day4 4](https://user-images.githubusercontent.com/43933912/220184962-0f811598-dca1-416e-b26a-76a72075f0ce.png)
 
 ##  Check on Async Pins
+In the synchronous circuits we have asynchronous reset/clr pin on flops. The asynchronous assertion of reset/clear happens it makes the output of flop to zero. This process is  an asynchronous even and has no relation with clock. But in case deasseration of reset/clear this even is a synchronous even it involves clock. To understand this lets suppose when we deaasert the reset/clear then the output shifts from reset/clear pin to data D pin which is a synchronous pin and comes under clock. If this shifting of flop Q output from asynch reset/clear pin to synchrnous D pin happens close to the clock edge it causes the flop output to go in unknown state. So, deassertion of reset/clear the flop to become dependent on clock. So, timing checks are needed to avoid this to happen.
+
+![day4 5](https://user-images.githubusercontent.com/43933912/220186896-e1bab862-981d-45e1-acfd-c4d93dfdfbbf.png)
+### Recovery Check
+Recovery check is that the de-assertion of the reset should occur soome time before the clock edge. It should not occur close to the clock edge. This some time before the clock edge is called recovery time.
+
+![day4 6](https://user-images.githubusercontent.com/43933912/220188245-2809e23f-d400-47cf-b206-af2ea955451e.png)
+
+### Removal Check
+Removal check is that the de-assertion of the reset should occur some time after the active clock edge. It should not occur close to the active edge of the clock. This some time after the clock edge is called removal time for reset pin given in the technology library.
+
+![day4 7](https://user-images.githubusercontent.com/43933912/220188582-3c363e26-747f-4009-bbb1-39c1d41954de.png)
+
+
 ##  Day-4 Labs
 ### Understanding Clock gating checks and Async Pins Checks
 # Day-5
