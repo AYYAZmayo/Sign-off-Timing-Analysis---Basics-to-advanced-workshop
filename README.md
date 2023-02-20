@@ -586,10 +586,10 @@ Her we have used a clock of 1ns period along with other timing constriants like 
 
 #### Set of TCL commands
 For performing STA of the design I have below commands that are provided to the tool in the form a tcl file named run.tcl <br />
-'read_liberty s27_Late.lib`  It reads the .lib file <br />
+`read_liberty s27_Late.lib`  It reads the .lib file <br />
 `read_verilog s27.v` It reads the design verilog netlist <br /> 
-`link_design s27` It links the top module of the design <br />
-`read_sdc s27.sdc` It reads the SDC constraints <br />
+`link_design s27`    It links the top module of the design <br />
+`read_sdc s27.sdc`   It reads the SDC constraints <br />
 `report_checks -from F1/CK` It perform timing analysis through F1 flop that is calculates the slack for all the paths through this flop F1 <br />
 #### openSTA tool run
 Run the openSTA tool using below command in the shell. <br />
@@ -598,7 +598,7 @@ Run the openSTA tool using below command in the shell. <br />
 ![day3 30](https://user-images.githubusercontent.com/43933912/220176218-17764009-2d50-4893-9e54-db47056cf69c.png)
 
 ### Slack Calculation and Setup Check Report
-''''
+```javascript
 Startpoint: F1 (rising edge-triggered flip-flop clocked by clk_net)
 Endpoint: F2 (rising edge-triggered flip-flop clocked by clk_net)
 Path Group: clk_net
@@ -628,7 +628,7 @@ Path Type: max
         -188.10   data arrival time
 ---------------------------------------------------------
         -217.32   slack (VIOLATED)
-''''
+```
 # Day-4
 ##  Cross Talk and Noise
 ##  Operating Modes and Other Variations
