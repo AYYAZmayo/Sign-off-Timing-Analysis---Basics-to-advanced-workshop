@@ -629,6 +629,7 @@ Path Type: max
 ---------------------------------------------------------
         -217.32   slack (VIOLATED)
 ```
+In the aobve report Path type is mentioned as Max which means it is setup report. This report also contains the start point and end point. As both the start poin and the end points are flops so it is REG-to-REG path setup report. Here final calculated slack is mentioned as -271.32 which is negative that means setup requiremnt is not met under this frequency.
 # Day-4
 ##  Cross Talk and Noise
 ##  Operating Modes and Other Variations
