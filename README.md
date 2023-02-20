@@ -564,6 +564,39 @@ Each of these nodes and arcs are represented into STA text report along with sta
 
 ## Day-3 Labs
 ### Understanding Full REG-to-REG STA Analysis
+A REG-to-REG path is btween two flops having some logic in between them. Let's suppose we have REG-to-REG path as shown in below figure.
+
+![day3 26](https://user-images.githubusercontent.com/43933912/220172839-859ce064-089b-4736-acd8-9e4c0a0e514c.png)
+
+ We analyze this path using openSTA tool find its slack. For this we have:
+#### Netlist of the design 
+we have s27 design verilog netlist s27.v
+
+![day3 27](https://user-images.githubusercontent.com/43933912/220174404-c417a97f-e9cd-4e76-8a84-6cbf20511246.png)
+
+#### Technology Library in .lib format
+we have used tau2015_s27_Late library for timing analysis.
+
+![day3 28](https://user-images.githubusercontent.com/43933912/220174655-af77604d-1125-47ff-9f4a-28cb8e1a6b34.png)
+
+#### SDC Constraints
+Her we have used a clock of 1ns period along with other timing constriants like set_input_delay, set_output_delay etc.
+
+![day3 29](https://user-images.githubusercontent.com/43933912/220174974-13bc1451-8652-48c1-8b94-2c1462558db2.png)
+
+#### Set of TCL commands
+For performing STA of the design I have below commands that are provided to the tool in the form a tcl file named run.tcl
+'read_liberty s27_Late.lib`  It reads the .lib file <br>
+`read_verilog s27.v` It reads the design verilog netlist <br /> 
+`link_design s27` It links the top module of the design <br />
+`read_sdc s27.sdc` It reads the SDC constraints <br />
+`report_checks -from F1/CK` It perform timing analysis through F1 flop that is calculates the slack for all the paths through this flop F1 <br />
+#### openSTA tool run
+Run the openSTA tool using below command in the shell. <br />
+`sta run.tcl -exit | tee out.txt`  <br />
+
+![day3 30](https://user-images.githubusercontent.com/43933912/220176218-17764009-2d50-4893-9e54-db47056cf69c.png)
+
 ### Slack Calculation and Review Setup Check Report
 # Day-4
 ##  Cross Talk and Noise
