@@ -632,7 +632,33 @@ Path Type: max
 In the aobve report Path type is mentioned as Max which means it is setup report. This report also contains the start point and end point. As both the start poin and the end points are flops so it is REG-to-REG path setup report. Here final calculated slack is mentioned as -271.32 which is negative that means setup requiremnt is not met under this frequency.
 # Day-4
 ##  Cross Talk and Noise
+### Cross Talk Impacting Delays
+When there are wires present in the close proximity of each other, a capling capacitance is introduced between them as shon in the below figre, where we have two wires one is aggressor and second is named as victm. So, what heppens when there is a signal in the agreesor rises from 0 to 1, due to coupling capacitance the signal in the vitm wire which going from 1 to 0 its transition time increases. So, when the transition time increases that menas the signal will falls slowly and it delay will increas. Similarly if the victm signal is rising that if it going rom 1 to 0 then it will rise faster due to coupling capacitance and its delay will decrease.
+
+![day4 1](https://user-images.githubusercontent.com/43933912/220180171-5bb30d6c-2ee5-49a3-9642-b9e823e3788c.png)
+
+The STA tool while checking setup and hold keeps this phenomena into count and make sure that he slack be met. And this phenomenon is known as cross talk and noise.
 ##  Operating Modes and Other Variations
+Chip manufactring is a physical process and during this process can be multiple variations between wafer to wafer or between two dies on the same wafer. Due to these variations occuring due to physical process, the cell delays and transitions are effected. There may some gates on die have less delays and same gates may have more delays on the other wafer. But we want to make sure that what ever the die or wafer is our design chip should work. So, for this STA tool take into acccount all thes process variations in performing timing analysis. For this there are different technology libraries are used such as max/slow library for setup check min/fast library
+and marginal library with marginal delays. These slow,fast and marginal are known as operating modes. So, STA tool also keep these process variations into account while timing analysis.
+
+![day4 2](https://user-images.githubusercontent.com/43933912/220182105-e8793bc2-f168-4e46-a3a3-047bea323167.png)
+##  Clock Gating check
+When an enable signal can control the path of the clock at a cell this clock is called the gated clock and this called clock gating used to overcome switching power within the chip. The signal which controls the path of clock must be used as clock dwonstream: <br />
+* Feed a flop or latch clock pin
+* Feed output port
+* Feed generated clock
+The intention of this check is that transition on gating pin does not create unnecessary active edge  of the clock in the fanout.
+### Active high clock gating check
+Active high clock  gating is performed using AND or NAND gates. An example is shown in the below figure when an "en" signal input "clk" connected at the inputs of an AND gate. For clock gating check it is that "en" singal shoud not change sometime before the rsing edge of clock and sometime after the falling edge of clock. These are known as setup and hold period respectively for clock gatting. These values are usually provide in the logic libraries under clockgating cells.
+
+![day4 3](https://user-images.githubusercontent.com/43933912/220184885-bdd2ecc1-061c-4edb-9c78-55d939964e48.png)
+
+### Active low clock gating check
+It is performed using OR or NOR cells. For Active low clock gating check it is that "en" singal shoud not change/remain stable sometime before the falling edge of clock and sometime after the rising edge of clock. These are known as setup and hold period respectively for clock gatting.
+
+![day4 4](https://user-images.githubusercontent.com/43933912/220184962-0f811598-dca1-416e-b26a-76a72075f0ce.png)
+
 ##  Check on Async Pins
 ##  Day-4 Labs
 ### Understanding Clock gating checks and Async Pins Checks
