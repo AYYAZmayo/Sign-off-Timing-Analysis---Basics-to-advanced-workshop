@@ -585,8 +585,8 @@ Her we have used a clock of 1ns period along with other timing constriants like 
 ![day3 29](https://user-images.githubusercontent.com/43933912/220174974-13bc1451-8652-48c1-8b94-2c1462558db2.png)
 
 #### Set of TCL commands
-For performing STA of the design I have below commands that are provided to the tool in the form a tcl file named run.tcl
-'read_liberty s27_Late.lib`  It reads the .lib file <br>
+For performing STA of the design I have below commands that are provided to the tool in the form a tcl file named run.tcl <br />
+'read_liberty s27_Late.lib`  It reads the .lib file <br />
 `read_verilog s27.v` It reads the design verilog netlist <br /> 
 `link_design s27` It links the top module of the design <br />
 `read_sdc s27.sdc` It reads the SDC constraints <br />
@@ -597,7 +597,38 @@ Run the openSTA tool using below command in the shell. <br />
 
 ![day3 30](https://user-images.githubusercontent.com/43933912/220176218-17764009-2d50-4893-9e54-db47056cf69c.png)
 
-### Slack Calculation and Review Setup Check Report
+### Slack Calculation and Setup Check Report
+''''
+Startpoint: F1 (rising edge-triggered flip-flop clocked by clk_net)
+Endpoint: F2 (rising edge-triggered flip-flop clocked by clk_net)
+Path Group: clk_net
+Path Type: max
+
+  Delay    Time   Description
+---------------------------------------------------------
+   0.00    0.00   clock clk_net (rise edge)
+   0.00    0.00   clock network delay (ideal)
+   0.00    0.00 ^ F1/CK (DFFR_X2)
+ 141.53  141.53 ^ F1/Q (DFFR_X2)
+   8.51  150.04 v U3/ZN (INV_X1)
+   7.82  157.86 ^ U4/ZN (INV_X1)
+   6.63  164.49 v U5/ZN (NAND2_X2)
+  23.62  188.10 ^ U7/ZN (NOR2_X1)
+   0.00  188.10 ^ F2/D (DFFR_X2)
+         188.10   data arrival time
+
+   1.00    1.00   clock clk_net (rise edge)
+   0.00    1.00   clock network delay (ideal)
+   0.00    1.00   clock reconvergence pessimism
+           1.00 ^ F2/CK (DFFR_X2)
+ -30.22  -29.22   library setup time
+         -29.22   data required time
+---------------------------------------------------------
+         -29.22   data required time
+        -188.10   data arrival time
+---------------------------------------------------------
+        -217.32   slack (VIOLATED)
+''''
 # Day-4
 ##  Cross Talk and Noise
 ##  Operating Modes and Other Variations
