@@ -855,7 +855,7 @@ As shown in below diagram the setup check can not be performed in one clock cycl
 
 ![day5 8](https://user-images.githubusercontent.com/43933912/220427497-df7b245e-879e-4891-a1e3-1ebebb669835.png)
 
-But when we modify the setup check behavior it will also modify the default hold check. For hold check we have to use a value of (setup value -1) that is 1 in aobive case.
+But when we modify the setup check behavior it will also modify the default hold check. For hold check we have to use a value of (setup value -1) that is 1 in aobive case.<br />
 `set_multicycle_path -setup 2 -from F1/CK -to F2/CK` <br />
 `set_multicycle_path -hold 1 -from F1/CK -to F2/CK` <br />
 
@@ -1012,5 +1012,118 @@ Path Type: max
 ---------------------------------------------------------
         -391.43   slack (VIOLATED)
 ```
+It can be clearly seen that slack is improved by 6.67 due to clock reconvergence pessimism removal.
+### ECO – Engineering Change Order
+In the ECO cycle, we perform various analysis one by one for every check which we need to close but not closed till PnR stage. There are specialized signoff tools that help us to analyze the issue and also suggest the changes we need to do in order to close the issue.The suggested change is captured in an eco file. In this lab we will focus on ECO for timing purposes, this is done to fix setup and hold violations. we have design s27 netlist first we run the STA without ECO applying then we apply ECO on the s27 design netlist and again perform the STA on the updated design. Following TCL commands are being used here.
 
+![day5 13](https://user-images.githubusercontent.com/43933912/220442012-644bb691-a72a-4ff2-9e7e-f7382b1a3086.png)
+
+Before ECO the setup and hold STA reports are given below:<br />
+```javascript
+Startpoint: F2 (rising edge-triggered flip-flop clocked by clk_net)
+Endpoint: G17 (output port clocked by clk_net)
+Path Group: clk_net
+Path Type: max
+
+  Delay    Time   Description
+---------------------------------------------------------
+   0.00    0.00   clock clk_net (rise edge)
+ 104.84  104.84   clock network delay (propagated)
+   0.00  104.84 ^ F2/CK (DFFR_X2)
+ 141.35  246.19 ^ F2/Q (DFFR_X2)
+   0.00  246.19 ^ G17 (out)
+         246.19   data arrival time
+
+   1.00    1.00   clock clk_net (rise edge)
+   0.00    1.00   clock network delay (propagated)
+   0.00    1.00   clock reconvergence pessimism
+   1.20    2.20   output external delay
+           2.20   data required time
+---------------------------------------------------------
+           2.20   data required time
+        -246.19   data arrival time
+---------------------------------------------------------
+        -243.99   slack (VIOLATED)
+
+
+Startpoint: F2 (rising edge-triggered flip-flop clocked by clk_net)
+Endpoint: G17 (output port clocked by clk_net)
+Path Group: clk_net
+Path Type: min
+
+  Delay    Time   Description
+---------------------------------------------------------
+   0.00    0.00   clock clk_net (rise edge)
+  94.85   94.85   clock network delay (propagated)
+   0.00   94.85 ^ F2/CK (DFFR_X2)
+ 103.23  198.08 v F2/Q (DFFR_X2)
+   0.00  198.08 v G17 (out)
+         198.08   data arrival time
+
+   0.00    0.00   clock clk_net (rise edge)
+   0.00    0.00   clock network delay (propagated)
+   0.00    0.00   clock reconvergence pessimism
+   2.10    2.10   output external delay
+           2.10   data required time
+---------------------------------------------------------
+           2.10   data required time
+        -198.08   data arrival time
+---------------------------------------------------------
+         195.98   slack (MET)
+```
+
+After the ECO we have a positve setup slack. <br />
+
+```javascript
+Startpoint: F2 (rising edge-triggered flip-flop clocked by clk_net)
+Endpoint: G17 (output port clocked by clk_net)
+Path Group: clk_net
+Path Type: max
+
+  Delay    Time   Description
+---------------------------------------------------------
+   0.00    0.00   clock clk_net (rise edge)
+ 144.66  144.66   clock network delay (propagated)
+   0.00  144.66 ^ F2/CK (DFFR_X2)
+ 141.35  286.01 ^ F2/Q (DFFR_X2)
+   0.00  286.01 ^ G17 (out)
+         286.01   data arrival time
+
+   1.00    1.00   clock clk_net (rise edge)
+   0.00    1.00   clock network delay (propagated)
+   0.00    1.00   clock reconvergence pessimism
+   1.20    2.20   output external delay
+           2.20   data required time
+---------------------------------------------------------
+           2.20   data required time
+        -286.01   data arrival time
+---------------------------------------------------------
+        -283.81   slack (VIOLATED)
+
+
+Startpoint: F2 (rising edge-triggered flip-flop clocked by clk_net)
+Endpoint: G17 (output port clocked by clk_net)
+Path Group: clk_net
+Path Type: min
+
+  Delay    Time   Description
+---------------------------------------------------------
+   0.00    0.00   clock clk_net (rise edge)
+ 130.87  130.87   clock network delay (propagated)
+   0.00  130.87 ^ F2/CK (DFFR_X2)
+ 103.23  234.10 v F2/Q (DFFR_X2)
+   0.00  234.10 v G17 (out)
+         234.10   data arrival time
+
+   0.00    0.00   clock clk_net (rise edge)
+   0.00    0.00   clock network delay (propagated)
+   0.00    0.00   clock reconvergence pessimism
+   2.10    2.10   output external delay
+           2.10   data required time
+---------------------------------------------------------
+           2.10   data required time
+        -234.10   data arrival time
+---------------------------------------------------------
+         232.00   slack (MET)
+```
 
