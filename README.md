@@ -828,9 +828,145 @@ STA by default takes all types of clocks as synchronous clocks. If we haveclocks
 ![day5 5](https://user-images.githubusercontent.com/43933912/220418431-3e1ff283-5a57-403d-af80-3f1cd2be848c.png)
 
 ##  Clock Properties
-
+There are some clock properties that we can specify using SDC commands for the STA tool they described here:
+`set_clcok_transition` -This specifies the rise and fall time of the clock pulse.<br />
+`set_clock_uncertainity` -This used for defining the values of clock skew and clock jitter <br />
+`set_clock_latency -source or -network` <br />
+`set_clock_sense` -This ised to define the sense of clock whether it is positve unate or negative unate <br />
+`set_ideal_network` <br />
 ##  Timing Exceptions
+Utill now we have tlaked that most of the checks are done one cycle and between two flops. This is default behavior of the STA. But there are some commands that used for handeling such exceptions in which check are done in more then clock cycles or we can ignore some paths as well. In order to modefy the default behavior of the STA tool we need to specify the paths on which we want to change the default behavior of the tool. For this we use path specifications ther are three type of path specifications 
+1) `-from` <br />
+2) `-to` <br />
+3) `-through <br />
+Here `-from` is used for start points, `-to` is used for end points of the paths and `through` ised for nets and combinational node between start and end points of the path. So, using these specifications we change the default behavior of the STA tool.
+
+### set_false_path
+set_false_path command is an exception that just tell the STA tool that does not time these paths.Let's suppose we have below path logic diagram and we want to tell STA tool that do not time the path that is highlighted in the below diagram then we will write this command as:<br />
+                                               `set_false_path -from F1/CK -throgh U1/Z -to F5/D` <br />
+So, STA tool will not time this path.
+
+![day5 7](https://user-images.githubusercontent.com/43933912/220425223-cf2b5939-3345-46be-a2d9-a4de7cc87b2b.png)
+
+### set_multicycle_path
+As we know that STA tool default behavior is that it checks timing after one clock cycles. But Let's suppose if the logic delay between two registers is so large that data can not be captured in one cycle then we have to modify the default behavior of the STA tool and we can use set_multicycle_path command in that case.
+As shown in below diagram the setup check can not be performed in one clock cycle due slow logic rather it can be performed in two clock cycles so, we use the below command for this: <br />
+`set_multicycle_path -setup 2 -from F1/CK -to F2/CK` <br />
+
+![day5 8](https://user-images.githubusercontent.com/43933912/220427497-df7b245e-879e-4891-a1e3-1ebebb669835.png)
+
+But when we modify the setup check behavior it will also modify the default hold check. For hold check we have to use a value of (setup value -1) that is 1 in aobive case.
+`set_multicycle_path -setup 2 -from F1/CK -to F2/CK` <br />
+`set_multicycle_path -hold 1 -from F1/CK -to F2/CK` <br />
+
+![day5 9](https://user-images.githubusercontent.com/43933912/220428027-457d8a19-81d8-429d-b230-bf54bf8e5d8b.png)
+
+### set_max_delay and set_min_delay
+If we want dont want to specify the delay in cycles as in case of multicycle paths, then we can directly give a delay value for setup check or max delay using `set_max_delay`. And similarly for hold check or min delay we can use `set_min_delay`.<br />
+### set_disable_timing
+set_disable_timing command is used for disbaling the timing across the cells e.g for this disbaling some cell arc from input to output of the cell. But it can also be used like set_false_path command.
 ##  Multiple Modes
+There is some commands that are used to specify modes in SDC form. They are described as follows
+### set_case_analysis
+This command is used to set som particular net to 1 or 0. Forexample we have MUX wholse select line "SEL" is zero then the Test_CLK goes out and if SEL is 1 then functional_CLK clock goest out for only timing the functional mode of the design. So this command can be used to time the design nase on different functional modes of the chip. 
 ##  Day-5 Labs
 ### Revisit Slack Computation
+Consider the following picture, based on this path logic we determine the slack using openSTA.
+
+![day5 10](https://user-images.githubusercontent.com/43933912/220434884-24aa4f5f-5da2-4a59-9509-41a0dd99e5ef.png)
+
+After anlyzing the setup check the setup timing report is given below.
+
+```javascript
+Startpoint: F1 (rising edge-triggered flip-flop clocked by clk_net)
+Endpoint: F2 (rising edge-triggered flip-flop clocked by clk_net)
+Path Group: clk_net
+Path Type: max
+
+  Delay    Time   Description
+---------------------------------------------------------
+   0.00    0.00   clock clk_net (rise edge)
+   0.00    0.00   clock network delay (ideal)
+   0.00    0.00 ^ F1/CK (DFFR_X2)
+ 141.53  141.53 ^ F1/Q (DFFR_X2)
+   8.51  150.04 v U3/ZN (INV_X1)
+   7.82  157.86 ^ U4/ZN (INV_X1)
+   6.63  164.49 v U5/ZN (NAND2_X2)
+  23.62  188.10 ^ U7/ZN (NOR2_X1)
+   0.00  188.10 ^ F2/D (DFFR_X2)
+         188.10   data arrival time
+
+   1.00    1.00   clock clk_net (rise edge)
+   0.00    1.00   clock network delay (ideal)
+   0.00    1.00   clock reconvergence pessimism
+           1.00 ^ F2/CK (DFFR_X2)
+ -30.22  -29.22   library setup time
+         -29.22   data required time
+---------------------------------------------------------
+         -29.22   data required time
+        -188.10   data arrival time
+---------------------------------------------------------
+        -217.32   slack (VIOLATED)
+
+```
 ### Understanding CRPR and ECO inseration
+For understanding the concept of CRPR we have consider the below logic circuit diagram where we have common path(based on U8 and U9 cells) between launch and capture paths.
+
+![day5 11](https://user-images.githubusercontent.com/43933912/220437614-9d3a572f-5e33-4e71-bba1-95dfb89fb13a.png)
+
+For running timing analysis of this circuit on openSTA we use the below tcl commands, initally we disable the CRPR in openSTA and calculate the slack for the worst path.
+`set sta_crpr_enabled 0` <br />
+`read_liberty -max s27_Late.lib` <br />
+`read_liberty -min s27_Early.lib` <br />
+`read_verilog s27.v` <br />
+`link_design s27` <br />
+`read_sdc s27.sdc` <br />
+`## Try run with cppr -disable` <br />
+`report_checks -to F2/D -format full_clock_expanded` <br />
+
+![day5 12](https://user-images.githubusercontent.com/43933912/220437671-34b43704-5879-4a2f-a8ba-8c9019bb0930.png)
+
+The generated STA report for the path with endpoint F2/D is given below: <br />
+```javascript
+Startpoint: F1 (rising edge-triggered flip-flop clocked by clk_net)
+Endpoint: F2 (rising edge-triggered flip-flop clocked by clk_net)
+Path Group: clk_net
+Path Type: max
+
+  Delay    Time   Description
+---------------------------------------------------------
+   0.00    0.00   clock clk_net (rise edge)
+   0.00    0.00   clock source latency
+   0.00    0.00 ^ clk_net (in)
+  **34.84   34.84 ^ U8/Z (CLKBUF_X2)**
+  **35.15   69.99 ^ U9/Z (CLKBUF_X2)**
+  34.85  104.84 ^ U10/Z (CLKBUF_X2)
+  34.84  139.68 ^ U11/Z (CLKBUF_X2)
+  34.84  174.53 ^ U12/Z (CLKBUF_X2)
+  34.84  209.37 ^ U13/Z (CLKBUF_X2)
+  34.71  244.08 ^ U14/Z (CLKBUF_X2)
+   0.00  244.08 ^ F1/CK (DFFR_X2)
+ 141.54  385.62 ^ F1/Q (DFFR_X2)
+   8.51  394.12 v U3/ZN (INV_X1)
+   7.82  401.94 ^ U4/ZN (INV_X1)
+   6.63  408.57 v U5/ZN (NAND2_X2)
+  23.62  432.19 ^ U7/ZN (NOR2_X1)
+   0.00  432.19 ^ F2/D (DFFR_X2)
+         432.19   data arrival time
+
+   1.00    1.00   clock clk_net (rise edge)
+   0.00    1.00   clock source latency
+   0.00    1.00 ^ clk_net (in)
+  **31.53   32.53 ^ U8/Z (CLKBUF_X2)**
+  **31.80   64.32 ^ U9/Z (CLKBUF_X2)**
+   0.00   64.32 ^ F2/CK (DFFR_X2)
+ -30.23   34.09   library setup time
+          34.09   data required time
+---------------------------------------------------------
+          34.09   data required time
+        -432.19   data arrival time
+---------------------------------------------------------
+        -398.10   slack (VIOLATED)
+```
+ 
+
