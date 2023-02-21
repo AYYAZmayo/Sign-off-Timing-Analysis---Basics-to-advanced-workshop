@@ -803,7 +803,32 @@ Path Type: max
 Under this time period setup slack is positve for Recovery check.
 # Day-5
 ##  Clock Groups
+To understand the concept of clock groups let's first understand how many types clocks are possible in a design.
+1) Synchronous Clocks
+Synchronous clocks are those clocks which have fixed phase relationship between them. One clock is divided version of the other clock. One easily pridict the clock edge of other clock base on first clock's edge.
+
+![day5 1](https://user-images.githubusercontent.com/43933912/220415525-5175abfc-7630-48a3-8f41-a162f0ceca8a.png)
+
+2) Asynchronous clocks
+Asynchronous clocks are those clocks which has no fix phase relationship among them. One can not pridict the edge of second clock base on first clock.
+
+![day5 2](https://user-images.githubusercontent.com/43933912/220415898-899f0b75-be9b-4ca0-8228-91d24c6d6cc7.png)
+
+3) Logically exclusive clocks
+Logically exclusive clcocks are those clocks which are selected base upon some logic. As shown in belwo figure where C1 clock and C2 clock are connected to the MUX and selected by the MUX select base on a logic. So, if the select 1 the C1 will be selected and if select is 0 C2 will be selected so they are exclusive based on logic.
+
+![day5 3](https://user-images.githubusercontent.com/43933912/220416682-cb09cf15-5727-4e24-9a0c-c0943e713015.png)
+
+4) Physically exclusive
+Physically exclusive clocks are those clocks which can not physically exist togather. Either one of them will exist. 
+![day5 4](https://user-images.githubusercontent.com/43933912/220417106-fd51f8b8-0c9b-4f11-b037-fe93f35f1e72.png)
+
+STA by default takes all types of clocks as synchronous clocks. If we haveclocks other than synchronous clocks then we have to tell the STA tool via `set_clock_groups` commands. Forexample if we have 6 six clocks in our design then we can tell STA tool which of the are asynchronous, logically exclusive or physically exclusive using `set_clock_groups` command. If we have `set_clock_groups -asynchronous -group{clk1 clk2 clk3} -group {clk4 clk5 clk6}` that means that group `{clk1 clk2 clk3}` is asynchronous to all the clocks in group `{clk4 clk5 clk6}`.
+
+![day5 5](https://user-images.githubusercontent.com/43933912/220418431-3e1ff283-5a57-403d-af80-3f1cd2be848c.png)
+
 ##  Clock Properties
+
 ##  Timing Exceptions
 ##  Multiple Modes
 ##  Day-5 Labs
