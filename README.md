@@ -675,7 +675,132 @@ Removal check is that the de-assertion of the reset should occur some time after
 
 
 ##  Day-4 Labs
-### Understanding Clock gating checks and Async Pins Checks
+### Performing Clock gating checks using openSTA
+ We analyze a design s27 in which a gatted clock is feeding the registers using openSTA tool calculate its slack. For this we have:
+
+#### Technology Library in .lib format
+we have used open source sky130_fd_sc_hd__tt_025C_1v80.lib library for timing analysis.
+
+![day4 9](https://user-images.githubusercontent.com/43933912/220399818-7e48b54b-cb4f-47ce-9051-4f5598f99f99.png)
+
+#### Netlist of the design 
+we have s27 design verilog netlist s27.v. Here in the netlist sky130_fd_sc_hd__dlclkp_4 cell from sky130 library is used for clock gating.
+
+![day4 8](https://user-images.githubusercontent.com/43933912/220398607-25c6af66-9f35-47a9-8b75-685d8b0227f8.png)
+
+#### SDC Constraints
+Her we have used a clock of 1ns period along with other timing constriants like set_input_delay, set_output_delay etc.
+
+![day3 29](https://user-images.githubusercontent.com/43933912/220174974-13bc1451-8652-48c1-8b94-2c1462558db2.png)
+
+#### Set of TCL commands
+For performing STA of the design I have below commands that are provided to the tool in the form a tcl file named run.tcl <br />
+`read_liberty ../sky130_fd_sc_hd__tt_025C_1v80.lib `  It reads the .lib file <br />
+`read_verilog s27.v` It reads the design verilog netlist <br /> 
+`link_design s27`    It links the top module of the design <br />
+`check_setup -verbose`  It performs the setup check <br />
+`read_sdc s27.sdc`   It reads the SDC constraints <br />
+`report_checks -to [get_pins clkgate/*]` It perform timing analysis calculates the slack for all the paths that ends at clkgate/* pins <br />
+#### openSTA tool run
+Run the openSTA tool using below command in the shell. <br />
+`sta run.tcl -exit | tee out.txt`  <br />
+
+![day4 10](https://user-images.githubusercontent.com/43933912/220401841-e65c3b5b-d637-474a-a71c-9ea78fba2afa.png)
+
+### Slack Calculation and Setup Check Report
+```javascript
+Startpoint: F1 (rising edge-triggered flip-flop clocked by clk_net)
+Endpoint: clkgate (rising clock gating-check end-point clocked by clk_net)
+Path Group: clk_net
+Path Type: max
+
+  Delay    Time   Description
+---------------------------------------------------------
+   0.00    0.00   clock clk_net (rise edge)
+   0.00    0.00   clock network delay (propagated)
+   0.00    0.00 ^ F1/CLK (sky130_fd_sc_hd__dfbbp_1)
+   1.08    1.08 ^ F1/Q (sky130_fd_sc_hd__dfbbp_1)
+   0.05    1.12 v U3/Y (sky130_fd_sc_hd__inv_1)
+   0.05    1.18 ^ U4/Y (sky130_fd_sc_hd__inv_1)
+   0.05    1.22 v U6/Y (sky130_fd_sc_hd__nand2_1)
+   0.08    1.30 ^ U7/Y (sky130_fd_sc_hd__nor2_1)
+   0.00    1.30 ^ clkgate/GATE (sky130_fd_sc_hd__dlclkp_4)
+           1.30   data arrival time
+
+   1.00    1.00   clock clk_net (rise edge)
+   0.00    1.00   clock network delay (propagated)
+   0.00    1.00   clock reconvergence pessimism
+           1.00 ^ clkgate/CLK (sky130_fd_sc_hd__dlclkp_4)
+  -0.37    0.63   library setup time
+           0.63   data required time
+---------------------------------------------------------
+           0.63   data required time
+          -1.30   data arrival time
+---------------------------------------------------------
+          -0.67   slack (VIOLATED)
+```
+Under this time period setup slack is negative.
+### Performing Async Pins Checks using openSTA
+We analyze a design s27 in which a RESET is used for the registers using openSTA tool calculate its slack. For this we have:
+
+#### Technology Library in .lib format
+we have used open source sky130_fd_sc_hd__tt_025C_1v80.lib library for timing analysis.
+
+![day4 9](https://user-images.githubusercontent.com/43933912/220399818-7e48b54b-cb4f-47ce-9051-4f5598f99f99.png)
+
+#### Netlist of the design 
+we have s27 design verilog netlist s27.v. 
+
+![day4 11](https://user-images.githubusercontent.com/43933912/220406303-72402f2b-aef2-4270-88f0-1cb97d010dc9.png)
+
+#### SDC Constraints
+Her we have used a clock of 1ns period along with other timing constriants like set_input_delay, set_output_delay etc.
+
+![day4 12](https://user-images.githubusercontent.com/43933912/220406617-31fdbe27-256c-4393-af70-1d286b13c2cd.png)
+
+#### Set of TCL commands
+For performing STA of the design I have below commands that are provided to the tool in the form a tcl file named run.tcl <br />
+`read_liberty ../sky130_fd_sc_hd__tt_025C_1v80.lib `  It reads the .lib file <br />
+`read_verilog s27.v` It reads the design verilog netlist <br /> 
+`link_design s27`    It links the top module of the design <br />
+`check_setup -verbose`  It performs the setup check <br />
+`read_sdc s27.sdc`   It reads the SDC constraints <br />
+`report_checks -to R1/RESET_B` <br />
+#### openSTA tool run
+Run the openSTA tool using below command in the shell. <br />
+`sta run.tcl -exit | tee out.txt`  <br />
+
+
+
+### Slack Calculation and Setup Check Report
+```javascript
+Startpoint: SYNC2 (rising edge-triggered flip-flop clocked by clk_net)
+Endpoint: R1 (recovery check against rising-edge clock clk_net)
+Path Group: **async_default**
+Path Type: max
+
+  Delay    Time   Description
+---------------------------------------------------------
+   0.00    0.00   clock clk_net (rise edge)
+   0.00    0.00   clock network delay (ideal)
+   0.00    0.00 ^ SYNC2/CLK (sky130_fd_sc_hd__dfbbp_1)
+   0.47    0.47 ^ SYNC2/Q (sky130_fd_sc_hd__dfbbp_1)
+   0.00    0.47 ^ R1/RESET_B (sky130_fd_sc_hd__dfbbp_1)
+           0.47   data arrival time
+
+   1.00    1.00   clock clk_net (rise edge)
+   0.00    1.00   clock network delay (ideal)
+   0.00    1.00   clock reconvergence pessimism
+           1.00 ^ R1/CLK (sky130_fd_sc_hd__dfbbp_1)
+  -0.07    0.93   library recovery time
+           0.93   data required time
+---------------------------------------------------------
+           0.93   data required time
+          -0.47   data arrival time
+---------------------------------------------------------
+           0.46   slack (MET)
+```
+Under this time period setup slack is positve for Recovery check.
 # Day-5
 ##  Clock Groups
 ##  Clock Properties
