@@ -1072,7 +1072,7 @@ Path Type: min
          195.98   slack (MET)
 ```
 
-After the ECO we have a positve setup slack. <br />
+After the ECO we have a more -ve setup slack. <br />
 
 ```javascript
 Startpoint: F2 (rising edge-triggered flip-flop clocked by clk_net)
