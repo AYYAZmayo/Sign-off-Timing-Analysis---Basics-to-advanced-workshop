@@ -938,8 +938,8 @@ Path Type: max
    0.00    0.00   clock clk_net (rise edge)
    0.00    0.00   clock source latency
    0.00    0.00 ^ clk_net (in)
-  **34.84   34.84 ^ U8/Z (CLKBUF_X2)**
-  **35.15   69.99 ^ U9/Z (CLKBUF_X2)**
+  34.84   34.84 ^ U8/Z (CLKBUF_X2)
+  35.15   69.99 ^ U9/Z (CLKBUF_X2)
   34.85  104.84 ^ U10/Z (CLKBUF_X2)
   34.84  139.68 ^ U11/Z (CLKBUF_X2)
   34.84  174.53 ^ U12/Z (CLKBUF_X2)
@@ -957,8 +957,8 @@ Path Type: max
    1.00    1.00   clock clk_net (rise edge)
    0.00    1.00   clock source latency
    0.00    1.00 ^ clk_net (in)
-  **31.53   32.53 ^ U8/Z (CLKBUF_X2)**
-  **31.80   64.32 ^ U9/Z (CLKBUF_X2)**
+  31.53   32.53 ^ U8/Z (CLKBUF_X2)
+  31.80   64.32 ^ U9/Z (CLKBUF_X2)
    0.00   64.32 ^ F2/CK (DFFR_X2)
  -30.23   34.09   library setup time
           34.09   data required time
@@ -968,5 +968,49 @@ Path Type: max
 ---------------------------------------------------------
         -398.10   slack (VIOLATED)
 ```
- 
+Now we re-run the STA with enabling the CRPR  as `set sta_crpr_enabled 1`. <br />
+
+```javascript
+Startpoint: F1 (rising edge-triggered flip-flop clocked by clk_net)
+Endpoint: F2 (rising edge-triggered flip-flop clocked by clk_net)
+Path Group: clk_net
+Path Type: max
+
+  Delay    Time   Description
+---------------------------------------------------------
+   0.00    0.00   clock clk_net (rise edge)
+   0.00    0.00   clock source latency
+   0.00    0.00 ^ clk_net (in)
+  34.84   34.84 ^ U8/Z (CLKBUF_X2)
+  35.15   69.99 ^ U9/Z (CLKBUF_X2)
+  34.85  104.84 ^ U10/Z (CLKBUF_X2)
+  34.84  139.68 ^ U11/Z (CLKBUF_X2)
+  34.84  174.53 ^ U12/Z (CLKBUF_X2)
+  34.84  209.37 ^ U13/Z (CLKBUF_X2)
+  34.71  244.08 ^ U14/Z (CLKBUF_X2)
+   0.00  244.08 ^ F1/CK (DFFR_X2)
+ 141.54  385.62 ^ F1/Q (DFFR_X2)
+   8.51  394.12 v U3/ZN (INV_X1)
+   7.82  401.94 ^ U4/ZN (INV_X1)
+   6.63  408.57 v U5/ZN (NAND2_X2)
+  23.62  432.19 ^ U7/ZN (NOR2_X1)
+   0.00  432.19 ^ F2/D (DFFR_X2)
+         432.19   data arrival time
+
+   1.00    1.00   clock clk_net (rise edge)
+   0.00    1.00   clock source latency
+   0.00    1.00 ^ clk_net (in)
+  31.53   32.53 ^ U8/Z (CLKBUF_X2)
+  31.80   64.32 ^ U9/Z (CLKBUF_X2)
+   0.00   64.32 ^ F2/CK (DFFR_X2)
+   6.67   70.99   clock reconvergence pessimism
+ -30.23   40.76   library setup time
+          40.76   data required time
+---------------------------------------------------------
+          40.76   data required time
+        -432.19   data arrival time
+---------------------------------------------------------
+        -391.43   slack (VIOLATED)
+```
+
 
