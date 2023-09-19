@@ -1,5 +1,4 @@
 # Sign-off-Timing-Analysis---Basics-to-advanced-workshop
-# Day-1
 ## STA Definition
 Static Timing analysis is a method of verifying the timing performance of a design. In other words we can say it is a method of verifying whether a degital design can work on a particular claimed frequency. Static timing analysis is static in nature that means there is no use of dynamic simulation in STA. It means it does not involve tesbenches or test vector for simulation, because of that it is fast and can be run on large capacity designs. It clopses the whole design into minimal number of cycles and analyze once. It is exaustive in nature which means it uses mathematical models instead of test vectors and perform timing checks on all possible timing paths and scenarios. One important thing is that it does not verify the logic functionality of the design, for logical functionality we use either functional simulation or logical equilance checking. It is pessimestic and conservative in more of the cases to provide enough guard band for the design timing requirements.
 It only verify the synchronous designs timing it does not verify the synchrous designs, for this we different tools that verify clock domain crossing and asynchronous checks.
@@ -215,7 +214,7 @@ Similarly for calculating transition time at the output port following methods a
 
 ![day1 27](https://user-images.githubusercontent.com/43933912/219883845-ce01eb5d-82e3-43cc-9266-36a62b2647a7.png)
 
-## Day-1-Labs
+## Labs
 ### OpenSTA Introduction
 OpenSTA is a gate level static timing verifier. As a stand-alone executable it can be used to verify the timing of a design using below standard file formats.<br />
 * A Gate level netlist in Verilog 
@@ -273,7 +272,6 @@ This generates a set of timing reports in the run.log file where we can analyze 
 
 ![day1 34](https://user-images.githubusercontent.com/43933912/219920960-3a282b35-94e9-4d1b-af6d-7fa4d3062330.png)
 
-# Day-2
 ## Other Timing Checks
 Other then conventional setup and hold checks we also have some timing checks that are crucial for timing verification of a design, these are
 * clock gating check - these are checked on the "en" pin of the clock gating. It could be on AND , OR or any  other gate base clock gating.
@@ -331,7 +329,7 @@ Each of these nodes and arcs are represented into STA text report along with sta
 
 ![day2 10](https://user-images.githubusercontent.com/43933912/219937306-adbbb773-d71a-414d-b655-2c9de0681248.png)
 
-## Day-2 Labs
+## Labs
 ### Liberty Files
 The liberty file of .lib file is an ASCII representation of the timing and power parameters associated with any cell in a particular semiconductor.
 technology. The .lib file contains timing models and data to calcute following:
@@ -407,7 +405,6 @@ Path Type: max
 ---------------------------------------------------------
         -198.55   slack (VIOLATED)
 ```
-# Day-3
 ## Multiple Clocks
 Uptill now we have performed STA on single clock and we performing setup and hold check on single clock. But we can also have multiple clocks in our design. In case of multiple clocks setup and hold check are also performed. For this, all the clocks are expanded on common base period(The base period is defined as the least common multiple of the clock periods involved). Then setup is performed base on the most closest launch and capture edges, that is most restrictive setup is used for setup check.
 
@@ -562,7 +559,7 @@ Each of these nodes and arcs are represented into STA text report along with sta
 
 ![day2 10](https://user-images.githubusercontent.com/43933912/219937306-adbbb773-d71a-414d-b655-2c9de0681248.png)
 
-## Day-3 Labs
+## Labs
 ### Understanding Full REG-to-REG STA Analysis
 A REG-to-REG path is btween two flops having some logic in between them. Let's suppose we have REG-to-REG path as shown in below figure.
 
@@ -630,7 +627,7 @@ Path Type: max
         -217.32   slack (VIOLATED)
 ```
 In the aobve report Path type is mentioned as Max which means it is setup report. This report also contains the start point and end point. As both the start poin and the end points are flops so it is REG-to-REG path setup report. Here final calculated slack is mentioned as -271.32 which is negative that means setup requiremnt is not met under this frequency.
-# Day-4
+
 ##  Cross Talk and Noise
 ### Cross Talk Impacting Delays
 When there are wires present in the close proximity of each other, a capling capacitance is introduced between them as shon in the below figre, where we have two wires one is aggressor and second is named as victm. So, what heppens when there is a signal in the agreesor rises from 0 to 1, due to coupling capacitance the signal in the vitm wire which going from 1 to 0 its transition time increases. So, when the transition time increases that menas the signal will falls slowly and it delay will increas. Similarly if the victm signal is rising that if it going rom 1 to 0 then it will rise faster due to coupling capacitance and its delay will decrease.
@@ -674,7 +671,7 @@ Removal check is that the de-assertion of the reset should occur some time after
 ![day4 7](https://user-images.githubusercontent.com/43933912/220188582-3c363e26-747f-4009-bbb1-39c1d41954de.png)
 
 
-##  Day-4 Labs
+##  Labs
 ### Performing Clock gating checks using openSTA
  We analyze a design s27 in which a gatted clock is feeding the registers using openSTA tool calculate its slack. For this we have:
 
@@ -801,7 +798,7 @@ Path Type: max
            0.46   slack (MET)
 ```
 Under this time period setup slack is positve for Recovery check.
-# Day-5
+
 ##  Clock Groups
 To understand the concept of clock groups let's first understand how many types clocks are possible in a design.
 1) Synchronous Clocks
@@ -869,7 +866,7 @@ set_disable_timing command is used for disbaling the timing across the cells e.g
 There is some commands that are used to specify modes in SDC form. They are described as follows
 ### set_case_analysis
 This command is used to set som particular net to 1 or 0. Forexample we have MUX wholse select line "SEL" is zero then the Test_CLK goes out and if SEL is 1 then functional_CLK clock goest out for only timing the functional mode of the design. So this command can be used to time the design nase on different functional modes of the chip. 
-##  Day-5 Labs
+##  Labs
 ### Revisit Slack Computation
 Consider the following picture, based on this path logic we determine the slack using openSTA.
 
